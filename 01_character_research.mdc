@@ -58,11 +58,36 @@ dream_character_template: |
   - **キャラクター名**: {{character_name}}
   - **出典作品**: {{source_work}}
   - **基本情報**: {{character_basic_info}}
+  - **希望する夢小説タイプ**: {{dream_type}}
 
-  ## 性格分析
+  ## Web検索による情報収集
+  ### 参考URL
+  {{reference_urls}}
+
+  ### 検索結果サマリー
+  {{web_research_summary}}
+
+  ## 詳細分析（Web検索結果 + 個人知識）
   ### 主要な性格特徴
-  {{personality_traits}}
+  **Web検索情報**: {{character_basic_info}}
+  **個人分析**: {{personality_traits}}
 
+  ### 魅力要素
+  **一般的な人気理由**: {{character_appeal}}
+  **個人的魅力ポイント**: {{appeal_points}}
+
+  ### 人間関係パターン
+  **公式設定**: {{character_relationships}}
+  **詳細分析**: {{relationships}}
+
+  ### 印象的エピソード
+  **有名シーン**: {{character_episodes}}
+  **お気に入りシーン**: {{favorite_scenes}}
+
+  ### 夢小説での人気傾向
+  {{dream_novel_trends}}
+
+  ## 性格・行動分析
   ### 価値観・信念
   {{values_beliefs}}
 
@@ -70,25 +95,14 @@ dream_character_template: |
   **長所**: {{strengths_weaknesses | split: '短所' | first}}
   **短所**: {{strengths_weaknesses | split: '短所' | last}}
 
-  ## 表現特徴
   ### 話し方・口癖
   {{speech_patterns}}
 
   ### 行動パターン
   {{behavioral_patterns}}
 
-  ## 人間関係
-  {{relationships}}
-
   ## 背景・過去
   {{background_story}}
-
-  ## 魅力分析
-  ### お気に入りシーン
-  {{favorite_scenes}}
-
-  ### 魅力ポイント
-  {{appeal_points}}
 
   ## 夢小説創作への活用
   ### キャラクター理解度チェック
@@ -97,6 +111,12 @@ dream_character_template: |
   - [ ] 行動パターンを理解している
   - [ ] 人間関係を把握している
   - [ ] 価値観を理解している
+  - [ ] 夢小説での人気傾向を把握している
+
+  ### 創作のヒント
+  - **関係性の方向性**: {{dream_type}}に適した関係性を検討
+  - **シチュエーション案**: 人気傾向を参考にしたシーン設定
+  - **注意点**: キャラクター性を保ちつつオリジナリティを追加
 
   ### 次のステップ
   1. 夢主との関係性設計
@@ -155,7 +175,31 @@ reference_character_template: |
   - **参考理由**: {{reference_reason}}
   - **基本情報**: {{character_basic_info}}
 
-  ## キャラクター分析
+  ## Web検索による情報収集
+  ### 参考URL
+  {{reference_urls}}
+
+  ### 検索結果サマリー
+  {{web_research_summary}}
+
+  ## 詳細分析（Web検索結果 + 個人知識）
+  ### 基本特徴
+  **Web検索情報**: {{character_basic_info}}
+  **詳細分析**: {{character_basic_info}}
+
+  ### 魅力要素の分析
+  **一般的な人気理由**: {{character_appeal}}
+  **個人的魅力認識**: {{appeal_elements}}
+
+  ### 人間関係パターン
+  **公式設定**: {{character_relationships}}
+  **関係性の特徴**: [ここに関係性の分析を記入]
+
+  ### 印象的エピソード
+  **有名シーン**: {{character_episodes}}
+  **重要な場面**: [ここに重要場面の分析を記入]
+
+  ## キャラクター深層分析
   ### 性格の核
   {{personality_core}}
 
@@ -172,7 +216,7 @@ reference_character_template: |
   {{growth_arc}}
 
   ## 魅力要素の分解
-  ### 魅力的な要素
+  ### 魅力的な要素（詳細）
   {{appeal_elements}}
 
   ### 抽出可能な要素
@@ -180,15 +224,20 @@ reference_character_template: |
 
   ## オリジナル創作への応用
   ### 汎用化可能な要素
-  - **性格面**: 
-  - **行動面**: 
-  - **関係性面**: 
-  - **成長面**: 
+  - **性格面**: {{personality_core}}から抽出できる普遍的特徴
+  - **行動面**: {{unique_traits}}から応用できる行動パターン
+  - **関係性面**: {{character_relationships}}から学べる関係構築法
+  - **成長面**: {{growth_arc}}から参考にできる変化の軌跡
 
   ### 独自性を加える方向性
-  - **設定の変更**: 
-  - **背景の差別化**: 
-  - **新しい要素の追加**: 
+  - **設定の変更**: 時代、職業、環境を変更
+  - **背景の差別化**: 異なる過去や動機を設定
+  - **新しい要素の追加**: オリジナルの特徴や能力を追加
+
+  ### 創作のヒント
+  - **核となる魅力**: {{appeal_elements}}の中で最も重要な要素
+  - **避けるべき点**: 表面的な模倣にならないよう注意
+  - **発展の方向**: 参考要素をベースにした独自の展開
 
   ### 次のステップ
   1. オリジナルキャラクター設計

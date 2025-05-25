@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 path_reference: "creative/creative_paths.mdc"
@@ -66,9 +66,55 @@ master_triggers:
         pattern: "(推しキャラ分析開始|推しキャラ研究|dream character analysis)：(.+)"
         group: 2
         store_as: "character_name"
+      - name: "collect_basic_info"
+        action: "ask_questions"
+        questions:
+          - key: "source_work"
+            question: "「{{character_name}}」が登場する作品名を教えてください"
+            required: true
+          - key: "reference_urls"
+            question: "参考になるURL（Wiki、公式サイト、ファンサイトなど）があれば教えてください（複数可、改行区切り）"
+            required: false
+          - key: "additional_info"
+            question: "事前に知っている重要な情報があれば教えてください"
+            required: false
+          - key: "dream_type"
+            question: "どのような夢小説を書きたいですか？（恋愛夢、友情夢、傍観夢、世界観夢など）"
+            required: false
+        store_as: "basic_info"
+      - name: "web_search_character_basic"
+        action: "web_search"
+        search_term: "{{character_name}} {{basic_info.source_work}} キャラクター 性格 特徴"
+        explanation: "キャラクターの基本情報と性格特徴を検索します"
+        store_as: "character_basic_data"
+      - name: "web_search_character_appeal"
+        action: "web_search"
+        search_term: "{{character_name}} {{basic_info.source_work}} 魅力 人気 理由 ファン"
+        explanation: "キャラクターの魅力要素と人気の理由を検索します"
+        store_as: "character_appeal_data"
+      - name: "web_search_character_relationships"
+        action: "web_search"
+        search_term: "{{character_name}} {{basic_info.source_work}} 人間関係 関係性 相関図"
+        explanation: "キャラクターの人間関係と関係性を検索します"
+        store_as: "character_relationship_data"
+      - name: "web_search_character_episodes"
+        action: "web_search"
+        search_term: "{{character_name}} {{basic_info.source_work}} 名シーン エピソード 印象的"
+        explanation: "キャラクターの印象的なシーンやエピソードを検索します"
+        store_as: "character_episode_data"
+      - name: "web_search_dream_novel_info"
+        action: "web_search"
+        search_term: "{{character_name}} {{basic_info.source_work}} 夢小説 二次創作 人気"
+        explanation: "キャラクターに関する夢小説の傾向や人気要素を検索します"
+        store_as: "dream_novel_data"
+      - name: "analyze_web_research"
+        action: "analyze"
+        data: ["{{character_basic_data}}", "{{character_appeal_data}}", "{{character_relationship_data}}", "{{character_episode_data}}", "{{dream_novel_data}}"]
+        instructions: "収集したWeb検索データを分析し、キャラクターの性格特徴、魅力要素、関係性パターン、重要エピソード、夢小説での人気要素を整理します"
+        store_as: "analyzed_character_data"
       - name: "start_character_analysis"
         action: "call creative/01_character_research.mdc => dream_character_questions"
-        message: "【推しキャラクター分析】「{{character_name}}」の分析を開始します。以下の質問に回答してください。"
+        message: "【推しキャラクター分析】「{{character_name}}」のWeb検索結果をもとに、詳細分析を行います。検索で得られた情報を参考に以下の質問に回答してください。"
       - name: "wait_user_responses"
         action: "wait_for_all_answers"
         message: "キャラクター分析に必要な情報を収集しています..."
@@ -79,11 +125,29 @@ master_triggers:
         action: "create_markdown_file"
         path: "{{patterns.draft_character_analysis}}"
         template_reference: "creative/01_character_research.mdc => dream_character_template"
+        data_mapping:
+          character_name: "{{character_name}}"
+          source_work: "{{basic_info.source_work}}"
+          reference_urls: "{{basic_info.reference_urls}}"
+          dream_type: "{{basic_info.dream_type}}"
+          web_research_summary: "{{analyzed_character_data}}"
+          character_basic_info: "{{character_basic_data}}"
+          character_appeal: "{{character_appeal_data}}"
+          character_relationships: "{{character_relationship_data}}"
+          character_episodes: "{{character_episode_data}}"
+          dream_novel_trends: "{{dream_novel_data}}"
         message: "キャラクター分析を作成しました: {{patterns.draft_character_analysis}}"
       - name: "notify_next_steps"
         action: "notify"
         message: |
           ✅ 「{{character_name}}」のキャラクター分析が完了しました！
+          
+          Web検索で収集した情報:
+          - 基本情報と性格特徴
+          - 魅力要素と人気の理由
+          - 人間関係と関係性パターン
+          - 印象的なシーンとエピソード
+          - 夢小説での人気傾向
           
           次のステップ:
           1. 「夢主関係性設計：{{character_name}}」で関係性を設計
@@ -101,9 +165,47 @@ master_triggers:
         pattern: "(参考キャラ分析開始|参考キャラ研究|reference character analysis)：(.+)"
         group: 2
         store_as: "character_name"
+      - name: "collect_basic_info"
+        action: "ask_questions"
+        questions:
+          - key: "source_work"
+            question: "「{{character_name}}」が登場する作品名を教えてください"
+            required: true
+          - key: "reference_urls"
+            question: "参考になるURL（Wiki、公式サイト、ファンサイトなど）があれば教えてください（複数可、改行区切り）"
+            required: false
+          - key: "additional_info"
+            question: "事前に知っている重要な情報があれば教えてください"
+            required: false
+        store_as: "basic_info"
+      - name: "web_search_character_basic"
+        action: "web_search"
+        search_term: "{{character_name}} {{basic_info.source_work}} キャラクター 性格 特徴"
+        explanation: "キャラクターの基本情報と性格特徴を検索します"
+        store_as: "character_basic_data"
+      - name: "web_search_character_detailed"
+        action: "web_search"
+        search_term: "{{character_name}} {{basic_info.source_work}} 魅力 人気 理由 分析"
+        explanation: "キャラクターの魅力要素と人気の理由を検索します"
+        store_as: "character_appeal_data"
+      - name: "web_search_character_relationships"
+        action: "web_search"
+        search_term: "{{character_name}} {{basic_info.source_work}} 人間関係 関係性 相関図"
+        explanation: "キャラクターの人間関係と関係性を検索します"
+        store_as: "character_relationship_data"
+      - name: "web_search_character_episodes"
+        action: "web_search"
+        search_term: "{{character_name}} {{basic_info.source_work}} 名シーン エピソード 印象的"
+        explanation: "キャラクターの印象的なシーンやエピソードを検索します"
+        store_as: "character_episode_data"
+      - name: "analyze_web_research"
+        action: "analyze"
+        data: ["{{character_basic_data}}", "{{character_appeal_data}}", "{{character_relationship_data}}", "{{character_episode_data}}"]
+        instructions: "収集したWeb検索データを分析し、キャラクターの性格特徴、魅力要素、関係性パターン、重要エピソードを整理します"
+        store_as: "analyzed_character_data"
       - name: "start_character_analysis"
         action: "call creative/01_character_research.mdc => reference_character_questions"
-        message: "【参考キャラクター分析】「{{character_name}}」の分析を開始します。以下の質問に回答してください。"
+        message: "【参考キャラクター分析】「{{character_name}}」のWeb検索結果をもとに、詳細分析を行います。検索で得られた情報を参考に以下の質問に回答してください。"
       - name: "wait_user_responses"
         action: "wait_for_all_answers"
         message: "キャラクター分析に必要な情報を収集しています..."
@@ -114,11 +216,26 @@ master_triggers:
         action: "create_markdown_file"
         path: "{{patterns.draft_character_analysis}}"
         template_reference: "creative/01_character_research.mdc => reference_character_template"
+        data_mapping:
+          character_name: "{{character_name}}"
+          source_work: "{{basic_info.source_work}}"
+          reference_urls: "{{basic_info.reference_urls}}"
+          web_research_summary: "{{analyzed_character_data}}"
+          character_basic_info: "{{character_basic_data}}"
+          character_appeal: "{{character_appeal_data}}"
+          character_relationships: "{{character_relationship_data}}"
+          character_episodes: "{{character_episode_data}}"
         message: "参考キャラクター分析を作成しました: {{patterns.draft_character_analysis}}"
       - name: "notify_next_steps"
         action: "notify"
         message: |
           ✅ 「{{character_name}}」の参考キャラクター分析が完了しました！
+          
+          Web検索で収集した情報:
+          - 基本情報と性格特徴
+          - 魅力要素と人気の理由
+          - 人間関係と関係性パターン
+          - 印象的なシーンとエピソード
           
           次のステップ:
           1. 「オリジナルキャラ設計：[新キャラ名]」でオリジナルキャラクターを設計
