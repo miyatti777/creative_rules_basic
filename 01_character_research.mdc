@@ -1,0 +1,397 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# ==========================================================
+# 01_character_research.mdc - キャラクター研究フェーズ
+# ==========================================================
+# キャラクター小説創作の基盤となるキャラクター研究を支援
+# 夢小説・オリジナル小説両方に対応
+
+#============================
+# 推しキャラクター分析（夢小説用）
+#============================
+
+dream_character_questions:
+  - key: "character_name"
+    question: "分析する推しキャラクターの名前を教えてください"
+    required: true
+  - key: "source_work"
+    question: "そのキャラクターが登場する作品名を教えてください"
+    required: true
+  - key: "character_basic_info"
+    question: "キャラクターの基本情報（年齢、職業、立場など）を教えてください"
+    required: true
+  - key: "personality_traits"
+    question: "そのキャラクターの性格の特徴を具体的に教えてください（3-5個程度）"
+    required: true
+  - key: "speech_patterns"
+    question: "そのキャラクターの話し方や口癖があれば教えてください"
+    required: true
+  - key: "behavioral_patterns"
+    question: "そのキャラクターの行動パターンや癖があれば教えてください"
+    required: true
+  - key: "relationships"
+    question: "そのキャラクターの重要な人間関係（家族、友人、恋人など）を教えてください"
+    required: true
+  - key: "background_story"
+    question: "そのキャラクターの背景や過去のエピソードで重要なものがあれば教えてください"
+    required: false
+  - key: "values_beliefs"
+    question: "そのキャラクターが大切にしている価値観や信念があれば教えてください"
+    required: true
+  - key: "strengths_weaknesses"
+    question: "そのキャラクターの長所と短所を教えてください"
+    required: true
+  - key: "favorite_scenes"
+    question: "原作でそのキャラクターが登場するお気に入りのシーンがあれば教えてください"
+    required: false
+  - key: "appeal_points"
+    question: "あなたがそのキャラクターに魅力を感じるポイントを教えてください"
+    required: true
+
+dream_character_template: |
+  # 推しキャラクター分析：{{character_name}}
+
+  ## 基本情報
+  - **キャラクター名**: {{character_name}}
+  - **出典作品**: {{source_work}}
+  - **基本情報**: {{character_basic_info}}
+
+  ## 性格分析
+  ### 主要な性格特徴
+  {{personality_traits}}
+
+  ### 価値観・信念
+  {{values_beliefs}}
+
+  ### 長所・短所
+  **長所**: {{strengths_weaknesses | split: '短所' | first}}
+  **短所**: {{strengths_weaknesses | split: '短所' | last}}
+
+  ## 表現特徴
+  ### 話し方・口癖
+  {{speech_patterns}}
+
+  ### 行動パターン
+  {{behavioral_patterns}}
+
+  ## 人間関係
+  {{relationships}}
+
+  ## 背景・過去
+  {{background_story}}
+
+  ## 魅力分析
+  ### お気に入りシーン
+  {{favorite_scenes}}
+
+  ### 魅力ポイント
+  {{appeal_points}}
+
+  ## 夢小説創作への活用
+  ### キャラクター理解度チェック
+  - [ ] 基本的な性格を理解している
+  - [ ] 話し方の特徴を把握している
+  - [ ] 行動パターンを理解している
+  - [ ] 人間関係を把握している
+  - [ ] 価値観を理解している
+
+  ### 次のステップ
+  1. 夢主との関係性設計
+  2. シチュエーション設定
+  3. 構成作成
+
+  ---
+  *作成日: {{today}}*
+  *分析者: {{creator_name}}*
+
+#============================
+# 参考キャラクター分析（オリジナル小説用）
+#============================
+
+reference_character_questions:
+  - key: "character_name"
+    question: "参考にするキャラクターの名前を教えてください"
+    required: true
+  - key: "source_work"
+    question: "そのキャラクターが登場する作品名を教えてください"
+    required: true
+  - key: "reference_reason"
+    question: "なぜこのキャラクターを参考にしたいのか理由を教えてください"
+    required: true
+  - key: "character_basic_info"
+    question: "キャラクターの基本情報（年齢、職業、立場など）を教えてください"
+    required: true
+  - key: "personality_core"
+    question: "そのキャラクターの性格の核となる部分を教えてください"
+    required: true
+  - key: "unique_traits"
+    question: "そのキャラクターの独特な特徴や個性を教えてください"
+    required: true
+  - key: "motivation_goals"
+    question: "そのキャラクターの動機や目標を教えてください"
+    required: true
+  - key: "conflict_struggles"
+    question: "そのキャラクターが抱える葛藤や困難を教えてください"
+    required: true
+  - key: "growth_arc"
+    question: "そのキャラクターの成長や変化があれば教えてください"
+    required: false
+  - key: "appeal_elements"
+    question: "そのキャラクターの魅力的な要素を具体的に教えてください"
+    required: true
+  - key: "extractable_elements"
+    question: "オリジナルキャラクターに活用したい要素を教えてください"
+    required: true
+
+reference_character_template: |
+  # 参考キャラクター分析：{{character_name}}
+
+  ## 基本情報
+  - **キャラクター名**: {{character_name}}
+  - **出典作品**: {{source_work}}
+  - **参考理由**: {{reference_reason}}
+  - **基本情報**: {{character_basic_info}}
+
+  ## キャラクター分析
+  ### 性格の核
+  {{personality_core}}
+
+  ### 独特な特徴
+  {{unique_traits}}
+
+  ### 動機・目標
+  {{motivation_goals}}
+
+  ### 葛藤・困難
+  {{conflict_struggles}}
+
+  ### 成長・変化
+  {{growth_arc}}
+
+  ## 魅力要素の分解
+  ### 魅力的な要素
+  {{appeal_elements}}
+
+  ### 抽出可能な要素
+  {{extractable_elements}}
+
+  ## オリジナル創作への応用
+  ### 汎用化可能な要素
+  - **性格面**: 
+  - **行動面**: 
+  - **関係性面**: 
+  - **成長面**: 
+
+  ### 独自性を加える方向性
+  - **設定の変更**: 
+  - **背景の差別化**: 
+  - **新しい要素の追加**: 
+
+  ### 次のステップ
+  1. オリジナルキャラクター設計
+  2. 世界観との整合性確認
+  3. 他キャラクターとの関係性設計
+
+  ---
+  *作成日: {{today}}*
+  *分析者: {{creator_name}}*
+
+#============================
+# 夢主関係性設計
+#============================
+
+relationship_design_questions:
+  - key: "character_name"
+    question: "関係性を設計する推しキャラクターの名前を教えてください"
+    required: true
+  - key: "relationship_type"
+    question: "どのような関係性を描きたいですか？"
+    options:
+      - "恋愛関係"
+      - "友情関係"
+      - "師弟関係"
+      - "ライバル関係"
+      - "家族的関係"
+      - "その他"
+    required: true
+  - key: "meeting_scenario"
+    question: "夢主と推しキャラクターの出会いのシチュエーションを教えてください"
+    required: true
+  - key: "yumeshu_personality"
+    question: "夢主の性格設定を教えてください"
+    required: true
+  - key: "yumeshu_background"
+    question: "夢主の背景設定（職業、立場、過去など）を教えてください"
+    required: true
+  - key: "relationship_development"
+    question: "関係性がどのように発展していくか教えてください"
+    required: true
+  - key: "interaction_style"
+    question: "二人の間の典型的なやり取りや会話のスタイルを教えてください"
+    required: true
+  - key: "conflict_elements"
+    question: "関係性における葛藤や障害があれば教えてください"
+    required: false
+  - key: "emotional_moments"
+    question: "描きたい感情的なシーンや瞬間があれば教えてください"
+    required: true
+
+relationship_design_template: |
+  # 夢主関係性設計：{{character_name}}
+
+  ## 関係性の基本設定
+  - **推しキャラクター**: {{character_name}}
+  - **関係性タイプ**: {{relationship_type}}
+
+  ## 夢主設定
+  ### 性格
+  {{yumeshu_personality}}
+
+  ### 背景
+  {{yumeshu_background}}
+
+  ## 関係性の展開
+  ### 出会いのシナリオ
+  {{meeting_scenario}}
+
+  ### 関係性の発展
+  {{relationship_development}}
+
+  ### やり取りのスタイル
+  {{interaction_style}}
+
+  ## ドラマ要素
+  ### 葛藤・障害
+  {{conflict_elements}}
+
+  ### 感情的な瞬間
+  {{emotional_moments}}
+
+  ## シーン設計のヒント
+  ### 日常シーン
+  - 
+  - 
+  - 
+
+  ### 特別なシーン
+  - 
+  - 
+  - 
+
+  ### 成長・変化のシーン
+  - 
+  - 
+  - 
+
+  ## 次のステップ
+  1. 具体的なシチュエーション設定
+  2. 構成作成（タロットカード式 or 構造分析式）
+  3. シーン執筆
+
+  ---
+  *作成日: {{today}}*
+  *設計者: {{creator_name}}*
+
+#============================
+# オリジナルキャラクター設計
+#============================
+
+original_character_questions:
+  - key: "character_name"
+    question: "作成するオリジナルキャラクターの名前を教えてください"
+    required: true
+  - key: "reference_inspiration"
+    question: "参考にした既存キャラクターや要素があれば教えてください"
+    required: false
+  - key: "basic_profile"
+    question: "キャラクターの基本プロフィール（年齢、職業、立場など）を教えてください"
+    required: true
+  - key: "personality_core"
+    question: "キャラクターの性格の核となる部分を教えてください"
+    required: true
+  - key: "unique_traits"
+    question: "このキャラクターならではの独特な特徴を教えてください"
+    required: true
+  - key: "background_story"
+    question: "キャラクターの背景や過去の設定を教えてください"
+    required: true
+  - key: "motivation_goals"
+    question: "キャラクターの動機や目標を教えてください"
+    required: true
+  - key: "strengths_weaknesses"
+    question: "キャラクターの長所と短所を教えてください"
+    required: true
+  - key: "speech_behavior"
+    question: "キャラクターの話し方や行動の特徴を教えてください"
+    required: true
+  - key: "relationships"
+    question: "他のキャラクターとの関係性設定があれば教えてください"
+    required: false
+  - key: "growth_potential"
+    question: "このキャラクターの成長の可能性や変化の方向性を教えてください"
+    required: true
+
+original_character_template: |
+  # オリジナルキャラクター設計：{{character_name}}
+
+  ## 基本プロフィール
+  - **名前**: {{character_name}}
+  - **基本情報**: {{basic_profile}}
+
+  ## 参考・インスピレーション
+  {{reference_inspiration}}
+
+  ## 性格設計
+  ### 性格の核
+  {{personality_core}}
+
+  ### 独特な特徴
+  {{unique_traits}}
+
+  ### 長所・短所
+  {{strengths_weaknesses}}
+
+  ## 背景設定
+  {{background_story}}
+
+  ## 動機・目標
+  {{motivation_goals}}
+
+  ## 表現特徴
+  ### 話し方・行動
+  {{speech_behavior}}
+
+  ## 人間関係
+  {{relationships}}
+
+  ## 成長の可能性
+  {{growth_potential}}
+
+  ## キャラクター活用ガイド
+  ### 得意なシチュエーション
+  - 
+  - 
+  - 
+
+  ### 苦手・困難なシチュエーション
+  - 
+  - 
+  - 
+
+  ### 感情表現のパターン
+  - **喜び**: 
+  - **怒り**: 
+  - **悲しみ**: 
+  - **驚き**: 
+
+  ## 次のステップ
+  1. 世界観との整合性確認
+  2. 他キャラクターとの関係性設計
+  3. 構成作成・シーン設計
+
+  ---
+  *作成日: {{today}}*
+  *設計者: {{creator_name}}*

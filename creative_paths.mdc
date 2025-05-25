@@ -1,0 +1,143 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# ==========================================================
+# creative_paths.mdc  ―  "キャラクター小説創作ルールが参照するパス辞書"
+# ==========================================================
+# ・{{ }} 内は Cursor が動的に置換するプレースホルダ変数
+# ・創作ワークスペース用のパス設定
+# ・最終更新: 2025-01-XX - キャラクター小説創作対応
+
+# ----
+# 0. ルートディレクトリ
+# ----
+root: "/Users/daisukemiyata/{{CREATIVE_WORKSPACE_ROOT}}"
+
+# ----
+# 1. 主要ディレクトリ（相対パス）
+# ----
+dirs:
+  # ─ Flow（WIP／ドラフト／創作中作品）
+  flow:           "{{root}}/Flow"
+  flow_templates: "{{dirs.rules_creative}}/templates"
+
+  # ─ Stock（完成作品・確定版）
+  stock:          "{{root}}/Stock"
+  creative_works: "{{dirs.stock}}/creative_works"
+  
+  # ─ 創作作品別ディレクトリ
+  dream_novels:   "{{dirs.creative_works}}/dream_novels"
+  original_novels: "{{dirs.creative_works}}/original_novels"
+  shared_resources: "{{dirs.creative_works}}/shared_resources"
+  
+  # ─ アーカイブ（完了作品・学習履歴）
+  archived:       "{{root}}/Archived"
+  completed_works: "{{dirs.archived}}/completed_works"
+  learning_history: "{{dirs.archived}}/learning_history"
+
+  # ─ ルールファイル
+  rules:          "{{root}}/.cursor/rules"
+  rules_creative: "{{dirs.rules}}/creative"
+  rules_templates: "{{dirs.rules_creative}}/templates"
+
+  # ─ コミュニティ
+  community:      "{{dirs.stock}}/community"
+  workshops:      "{{dirs.community}}/workshops"
+  feedback:       "{{dirs.community}}/feedback"
+
+  # ─ 設定・スクリプト
+  config:         "{{root}}/config"
+  scripts:        "{{root}}/scripts"
+
+# ----
+# 2. 動的パターン
+# ----
+patterns:
+
+  # ---- Flow 側 ----
+  # 日付フォルダパス
+  flow_yearmonth:     "{{dirs.flow}}/{{today | slice: 0, 4}}{{today | slice: 5, 2}}"  # 例) Flow/202501
+  flow_date:          "{{patterns.flow_yearmonth}}/{{today}}"  # 例) Flow/202501/2025-01-15
+  
+  # 創作専用フォルダ
+  flow_creative:      "{{patterns.flow_date}}/creative"
+  
+  # ---- キャラクター研究関連 ----
+  character_research_dir: "{{patterns.flow_creative}}/character_research"
+  draft_character_analysis: "{{patterns.character_research_dir}}/draft_character_analysis_{{character_name}}.md"
+  draft_relationship_design: "{{patterns.character_research_dir}}/draft_relationship_design_{{character_name}}.md"
+  draft_original_character: "{{patterns.character_research_dir}}/draft_original_character_{{character_name}}.md"
+  
+  # ---- 構成・設計関連 ----
+  story_structure_dir: "{{patterns.flow_creative}}/story_structure"
+  draft_story_structure: "{{patterns.story_structure_dir}}/draft_story_structure_{{work_name}}.md"
+  draft_tarot_structure: "{{patterns.story_structure_dir}}/draft_tarot_structure_{{work_name}}.md"
+  draft_scene_outline: "{{patterns.story_structure_dir}}/draft_scene_outline_{{work_name}}.md"
+  
+  # ---- シーン作成関連 ----
+  scene_creation_dir: "{{patterns.flow_creative}}/scenes"
+  draft_scene: "{{patterns.scene_creation_dir}}/draft_scene_{{scene_name}}.md"
+  draft_dialogue: "{{patterns.scene_creation_dir}}/draft_dialogue_{{scene_name}}.md"
+  draft_description: "{{patterns.scene_creation_dir}}/draft_description_{{scene_name}}.md"
+  
+  # ---- 作品管理関連 ----
+  work_management_dir: "{{patterns.flow_creative}}/work_management"
+  draft_work_plan: "{{patterns.work_management_dir}}/draft_work_plan_{{work_name}}.md"
+  draft_progress_log: "{{patterns.work_management_dir}}/draft_progress_log_{{work_name}}.md"
+  draft_quality_check: "{{patterns.work_management_dir}}/draft_quality_check_{{work_name}}.md"
+  
+  # ---- 完成作品関連 ----
+  draft_final_work: "{{patterns.flow_creative}}/draft_final_work_{{work_name}}.md"
+  
+  # ---- Stock: 夢小説 ----
+  dream_novel_work_dir: "{{dirs.dream_novels}}/{{work_name}}"
+  dream_novel_character_research: "{{patterns.dream_novel_work_dir}}/character_research"
+  dream_novel_story_structure: "{{patterns.dream_novel_work_dir}}/story_structure"
+  dream_novel_scenes: "{{patterns.dream_novel_work_dir}}/scenes"
+  dream_novel_final: "{{patterns.dream_novel_work_dir}}/final_work.md"
+  
+  # ---- Stock: オリジナル小説 ----
+  original_novel_work_dir: "{{dirs.original_novels}}/{{work_name}}"
+  original_novel_character_design: "{{patterns.original_novel_work_dir}}/character_design"
+  original_novel_world_building: "{{patterns.original_novel_work_dir}}/world_building"
+  original_novel_story_structure: "{{patterns.original_novel_work_dir}}/story_structure"
+  original_novel_scenes: "{{patterns.original_novel_work_dir}}/scenes"
+  original_novel_final: "{{patterns.original_novel_work_dir}}/final_work.md"
+  
+  # ---- 共有リソース ----
+  character_templates: "{{dirs.shared_resources}}/character_templates"
+  prompt_collections: "{{dirs.shared_resources}}/prompt_collections"
+  reference_materials: "{{dirs.shared_resources}}/reference_materials"
+  
+  # ---- テンプレートファイル ----
+  character_analysis_template: "{{dirs.flow_templates}}/character_analysis_template.md"
+  story_structure_template: "{{dirs.flow_templates}}/story_structure_template.md"
+  scene_creation_template: "{{dirs.flow_templates}}/scene_creation_template.md"
+  work_plan_template: "{{dirs.flow_templates}}/work_plan_template.md"
+
+# ----
+# 3. 便利変数（任意拡張）
+# ----
+meta:
+  today:          "{{env.NOW:date:YYYY-MM-DD}}"
+  week_end_date:  "{{env.WEEK_END:date:YYYY-MM-DD}}"
+  
+  # ---- 創作関連変数 ---
+  character_name: ""      # キャラクター名
+  work_name:      ""      # 作品名
+  scene_name:     ""      # シーン名
+  work_type:      ""      # 作品タイプ（dream_novel / original_novel）
+  
+  # ---- 創作者情報 ---
+  creator_name:   "{{env.CREATOR_NAME}}"
+  pen_name:       "{{env.PEN_NAME}}"
+  
+  # ---- 作品設定 ---
+  genre:          ""      # ジャンル
+  target_length:  ""      # 目標文字数
+  completion_date: ""     # 完成予定日
+  
+  # ---- バージョン情報 ---
+  version:       "v1.0"  # ルールバージョン

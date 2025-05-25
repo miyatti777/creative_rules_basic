@@ -1,0 +1,577 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+path_reference: "creative/creative_paths.mdc"
+
+# =========================
+# AI注意事項 - AIが確実に守るべき指示
+# =========================
+ai_instructions:
+  - "すべてのルールは正確に実行し、独自の解釈で変更しないこと"
+  - "execute_shellアクションのコマンドは一切変更せずそのまま実行すること"
+  - "指定されたファイルパスやフォルダ構造を尊重し、勝手に構造を変更しないこと"
+  - "失敗した場合でも代替手段を取らず、失敗を報告してユーザーの指示を仰ぐこと"
+  - "パスや変数の設定はcreative_paths.mdcを参照し、正確に使用すること"
+  - "特にFlow/年月/日付のフォルダ構造は必ず守ること"
+  - "キャラクター研究を重視し、表面的な模倣ではなく深層的な理解に基づく創作を支援すること"
+
+master_triggers:
+
+#============================
+# 創作環境セットアップ
+#============================
+
+  #-----
+  # 創作環境初期化
+  #-----
+  - trigger: "(創作環境セットアップ|創作環境初期化|creative setup)"
+    priority: high
+    steps:
+      - name: "create_today_folders"
+        action: "execute_shell"
+        command: "mkdir -p {{patterns.flow_creative}} {{patterns.character_research_dir}} {{patterns.story_structure_dir}} {{patterns.scene_creation_dir}} {{patterns.work_management_dir}}"
+        message: "今日の創作フォルダを作成しています..."
+      - name: "create_config_if_needed"
+        action: "execute_shell"
+        command: "mkdir -p {{dirs.config}}"
+        message: "設定フォルダを確認しています..."
+      - name: "notify_setup_complete"
+        action: "notify"
+        message: |
+          ✅ 創作環境のセットアップが完了しました！
+          
+          今日の創作フォルダ: {{patterns.flow_creative}}
+          
+          次のステップ:
+          1. 夢小説を書く場合：「推しキャラ分析開始：[キャラクター名]」
+          2. オリジナル小説を書く場合：「参考キャラ分析開始：[キャラクター名]」
+          3. 既存作品の続きを書く場合：「作品再開：[作品名]」
+          
+          創作を始めましょう！
+
+#============================
+# フェーズ1: キャラクター研究（Character Research）
+#============================
+
+  #-----
+  # 推しキャラクター分析（夢小説用）
+  #-----
+  - trigger: "(推しキャラ分析開始|推しキャラ研究|dream character analysis)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_character_name"
+        action: "extract"
+        pattern: "(推しキャラ分析開始|推しキャラ研究|dream character analysis)：(.+)"
+        group: 2
+        store_as: "character_name"
+      - name: "start_character_analysis"
+        action: "call creative/01_character_research.mdc => dream_character_questions"
+        message: "【推しキャラクター分析】「{{character_name}}」の分析を開始します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "キャラクター分析に必要な情報を収集しています..."
+      - name: "confirm_analysis_creation"
+        action: "confirm"
+        message: "「{{character_name}}」のキャラクター分析を作成します。よろしいですか？"
+      - name: "create_character_analysis"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_character_analysis}}"
+        template_reference: "creative/01_character_research.mdc => dream_character_template"
+        message: "キャラクター分析を作成しました: {{patterns.draft_character_analysis}}"
+      - name: "notify_next_steps"
+        action: "notify"
+        message: |
+          ✅ 「{{character_name}}」のキャラクター分析が完了しました！
+          
+          次のステップ:
+          1. 「夢主関係性設計：{{character_name}}」で関係性を設計
+          2. 「夢小説構成作成：タロットカード式」で構成を作成
+          3. 「夢小説構成作成：構造分析式 [参考作品名]」で既存作品を参考に構成作成
+
+  #-----
+  # 参考キャラクター分析（オリジナル小説用）
+  #-----
+  - trigger: "(参考キャラ分析開始|参考キャラ研究|reference character analysis)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_character_name"
+        action: "extract"
+        pattern: "(参考キャラ分析開始|参考キャラ研究|reference character analysis)：(.+)"
+        group: 2
+        store_as: "character_name"
+      - name: "start_character_analysis"
+        action: "call creative/01_character_research.mdc => reference_character_questions"
+        message: "【参考キャラクター分析】「{{character_name}}」の分析を開始します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "キャラクター分析に必要な情報を収集しています..."
+      - name: "confirm_analysis_creation"
+        action: "confirm"
+        message: "「{{character_name}}」の参考キャラクター分析を作成します。よろしいですか？"
+      - name: "create_character_analysis"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_character_analysis}}"
+        template_reference: "creative/01_character_research.mdc => reference_character_template"
+        message: "参考キャラクター分析を作成しました: {{patterns.draft_character_analysis}}"
+      - name: "notify_next_steps"
+        action: "notify"
+        message: |
+          ✅ 「{{character_name}}」の参考キャラクター分析が完了しました！
+          
+          次のステップ:
+          1. 「オリジナルキャラ設計：[新キャラ名]」でオリジナルキャラクターを設計
+          2. 「オリジナル小説構成作成：[構成タイプ]」で構成を作成
+
+  #-----
+  # 夢主関係性設計
+  #-----
+  - trigger: "(夢主関係性設計|relationship design)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_character_name"
+        action: "extract"
+        pattern: "(夢主関係性設計|relationship design)：(.+)"
+        group: 2
+        store_as: "character_name"
+      - name: "start_relationship_design"
+        action: "call creative/01_character_research.mdc => relationship_design_questions"
+        message: "【夢主関係性設計】「{{character_name}}」との関係性を設計します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "関係性設計に必要な情報を収集しています..."
+      - name: "confirm_relationship_creation"
+        action: "confirm"
+        message: "「{{character_name}}」との関係性設計を作成します。よろしいですか？"
+      - name: "create_relationship_design"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_relationship_design}}"
+        template_reference: "creative/01_character_research.mdc => relationship_design_template"
+        message: "関係性設計を作成しました: {{patterns.draft_relationship_design}}"
+      - name: "notify_next_steps"
+        action: "notify"
+        message: |
+          ✅ 「{{character_name}}」との関係性設計が完了しました！
+          
+          次のステップ:
+          1. 「夢小説構成作成：タロットカード式」で構成を作成
+          2. 「夢小説構成作成：構造分析式 [参考作品名]」で既存作品を参考に構成作成
+
+  #-----
+  # オリジナルキャラクター設計
+  #-----
+  - trigger: "(オリジナルキャラ設計|original character design)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_character_name"
+        action: "extract"
+        pattern: "(オリジナルキャラ設計|original character design)：(.+)"
+        group: 2
+        store_as: "character_name"
+      - name: "start_original_character_design"
+        action: "call creative/01_character_research.mdc => original_character_questions"
+        message: "【オリジナルキャラクター設計】「{{character_name}}」を設計します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "オリジナルキャラクター設計に必要な情報を収集しています..."
+      - name: "confirm_character_creation"
+        action: "confirm"
+        message: "オリジナルキャラクター「{{character_name}}」を作成します。よろしいですか？"
+      - name: "create_original_character"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_original_character}}"
+        template_reference: "creative/01_character_research.mdc => original_character_template"
+        message: "オリジナルキャラクターを作成しました: {{patterns.draft_original_character}}"
+      - name: "notify_next_steps"
+        action: "notify"
+        message: |
+          ✅ オリジナルキャラクター「{{character_name}}」の設計が完了しました！
+          
+          次のステップ:
+          1. 「オリジナル小説構成作成：[構成タイプ]」で構成を作成
+          2. 「世界観設計：[世界観タイプ]」で世界観を構築
+
+#============================
+# フェーズ2: 構成・設計（Story Structure）
+#============================
+
+  #-----
+  # 夢小説構成作成（タロットカード式）
+  #-----
+  - trigger: "(夢小説構成作成：タロットカード式|dream novel tarot structure)"
+    priority: high
+    steps:
+      - name: "start_tarot_structure"
+        action: "call creative/02_story_structure.mdc => tarot_structure_questions"
+        message: "【タロットカード式構成】夢小説の構成をタロットカード式で作成します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "タロットカード式構成に必要な情報を収集しています..."
+      - name: "confirm_structure_creation"
+        action: "confirm"
+        message: "タロットカード式で夢小説の構成を作成します。よろしいですか？"
+      - name: "create_tarot_structure"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_tarot_structure}}"
+        template_reference: "creative/02_story_structure.mdc => tarot_structure_template"
+        message: "タロットカード式構成を作成しました: {{patterns.draft_tarot_structure}}"
+      - name: "notify_next_steps"
+        action: "notify"
+        message: |
+          ✅ タロットカード式構成が完了しました！
+          
+          次のステップ:
+          1. 「シーン詳細設計：[シーン名]」で各シーンを詳細設計
+          2. 「夢小説シーン作成：[シーン設定]」でシーンを執筆
+
+  #-----
+  # 夢小説構成作成（構造分析式）
+  #-----
+  - trigger: "(夢小説構成作成：構造分析式|dream novel structure analysis)\\s+(.+)"
+    priority: high
+    steps:
+      - name: "extract_reference_work"
+        action: "extract"
+        pattern: "(夢小説構成作成：構造分析式|dream novel structure analysis)\\s+(.+)"
+        group: 2
+        store_as: "reference_work"
+      - name: "start_structure_analysis"
+        action: "call creative/02_story_structure.mdc => structure_analysis_questions"
+        message: "【構造分析式構成】「{{reference_work}}」を参考に夢小説の構成を作成します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "構造分析式構成に必要な情報を収集しています..."
+      - name: "confirm_structure_creation"
+        action: "confirm"
+        message: "「{{reference_work}}」を参考に夢小説の構成を作成します。よろしいですか？"
+      - name: "create_structure_analysis"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_story_structure}}"
+        template_reference: "creative/02_story_structure.mdc => structure_analysis_template"
+        message: "構造分析式構成を作成しました: {{patterns.draft_story_structure}}"
+      - name: "notify_next_steps"
+        action: "notify"
+        message: |
+          ✅ 「{{reference_work}}」を参考にした構成が完了しました！
+          
+          次のステップ:
+          1. 「シーン詳細設計：[シーン名]」で各シーンを詳細設計
+          2. 「夢小説シーン作成：[シーン設定]」でシーンを執筆
+
+  #-----
+  # オリジナル小説構成作成
+  #-----
+  - trigger: "(オリジナル小説構成作成|original novel structure)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_structure_type"
+        action: "extract"
+        pattern: "(オリジナル小説構成作成|original novel structure)：(.+)"
+        group: 2
+        store_as: "structure_type"
+      - name: "start_original_structure"
+        action: "call creative/02_story_structure.mdc => original_structure_questions"
+        message: "【オリジナル小説構成】「{{structure_type}}」タイプの構成を作成します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "オリジナル小説構成に必要な情報を収集しています..."
+      - name: "confirm_structure_creation"
+        action: "confirm"
+        message: "「{{structure_type}}」タイプのオリジナル小説構成を作成します。よろしいですか？"
+      - name: "create_original_structure"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_story_structure}}"
+        template_reference: "creative/02_story_structure.mdc => original_structure_template"
+        message: "オリジナル小説構成を作成しました: {{patterns.draft_story_structure}}"
+      - name: "notify_next_steps"
+        action: "notify"
+        message: |
+          ✅ 「{{structure_type}}」タイプの構成が完了しました！
+          
+          次のステップ:
+          1. 「シーン詳細設計：[シーン名]」で各シーンを詳細設計
+          2. 「オリジナルシーン作成：[シーン設定]」でシーンを執筆
+
+  #-----
+  # 世界観設計
+  #-----
+  - trigger: "(世界観設計|world building)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_world_type"
+        action: "extract"
+        pattern: "(世界観設計|world building)：(.+)"
+        group: 2
+        store_as: "world_type"
+      - name: "start_world_building"
+        action: "call creative/02_story_structure.mdc => world_building_questions"
+        message: "【世界観設計】「{{world_type}}」の世界観を設計します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "世界観設計に必要な情報を収集しています..."
+      - name: "confirm_world_creation"
+        action: "confirm"
+        message: "「{{world_type}}」の世界観を作成します。よろしいですか？"
+      - name: "create_world_building"
+        action: "create_markdown_file"
+        path: "{{patterns.story_structure_dir}}/draft_world_building_{{world_type}}.md"
+        template_reference: "creative/02_story_structure.mdc => world_building_template"
+        message: "世界観設計を作成しました: {{patterns.story_structure_dir}}/draft_world_building_{{world_type}}.md"
+
+#============================
+# フェーズ3: シーン作成（Scene Creation）
+#============================
+
+  #-----
+  # 夢小説シーン作成
+  #-----
+  - trigger: "(夢小説シーン作成|dream novel scene)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_scene_setting"
+        action: "extract"
+        pattern: "(夢小説シーン作成|dream novel scene)：(.+)"
+        group: 2
+        store_as: "scene_setting"
+      - name: "start_dream_scene_creation"
+        action: "call creative/03_scene_creation.mdc => dream_scene_questions"
+        message: "【夢小説シーン作成】「{{scene_setting}}」のシーンを作成します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "シーン作成に必要な情報を収集しています..."
+      - name: "confirm_scene_creation"
+        action: "confirm"
+        message: "「{{scene_setting}}」のシーンを作成します。よろしいですか？"
+      - name: "create_dream_scene"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_scene}}"
+        template_reference: "creative/03_scene_creation.mdc => dream_scene_template"
+        message: "夢小説シーンを作成しました: {{patterns.draft_scene}}"
+      - name: "notify_next_steps"
+        action: "notify"
+        message: |
+          ✅ 「{{scene_setting}}」のシーンが完了しました！
+          
+          次のステップ:
+          1. 「シーン推敲：{{scene_setting}}」で品質向上
+          2. 「次のシーン作成」で続きを執筆
+          3. 「作品確定：[作品名]」で作品を完成
+
+  #-----
+  # オリジナルシーン作成
+  #-----
+  - trigger: "(オリジナルシーン作成|original scene)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_scene_setting"
+        action: "extract"
+        pattern: "(オリジナルシーン作成|original scene)：(.+)"
+        group: 2
+        store_as: "scene_setting"
+      - name: "start_original_scene_creation"
+        action: "call creative/03_scene_creation.mdc => original_scene_questions"
+        message: "【オリジナルシーン作成】「{{scene_setting}}」のシーンを作成します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "シーン作成に必要な情報を収集しています..."
+      - name: "confirm_scene_creation"
+        action: "confirm"
+        message: "「{{scene_setting}}」のシーンを作成します。よろしいですか？"
+      - name: "create_original_scene"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_scene}}"
+        template_reference: "creative/03_scene_creation.mdc => original_scene_template"
+        message: "オリジナルシーンを作成しました: {{patterns.draft_scene}}"
+      - name: "notify_next_steps"
+        action: "notify"
+        message: |
+          ✅ 「{{scene_setting}}」のシーンが完了しました！
+          
+          次のステップ:
+          1. 「シーン推敲：{{scene_setting}}」で品質向上
+          2. 「次のシーン作成」で続きを執筆
+          3. 「作品確定：[作品名]」で作品を完成
+
+#============================
+# フェーズ4: 品質向上・完成（Quality & Completion）
+#============================
+
+  #-----
+  # シーン推敲
+  #-----
+  - trigger: "(シーン推敲|scene refinement)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_scene_name"
+        action: "extract"
+        pattern: "(シーン推敲|scene refinement)：(.+)"
+        group: 2
+        store_as: "scene_name"
+      - name: "start_scene_refinement"
+        action: "call creative/04_quality_improvement.mdc => scene_refinement_questions"
+        message: "【シーン推敲】「{{scene_name}}」のシーンを推敲します。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "シーン推敲に必要な情報を収集しています..."
+      - name: "confirm_refinement"
+        action: "confirm"
+        message: "「{{scene_name}}」のシーンを推敲します。よろしいですか？"
+      - name: "create_refined_scene"
+        action: "create_markdown_file"
+        path: "{{patterns.scene_creation_dir}}/refined_scene_{{scene_name}}.md"
+        template_reference: "creative/04_quality_improvement.mdc => scene_refinement_template"
+        message: "推敲済みシーンを作成しました: {{patterns.scene_creation_dir}}/refined_scene_{{scene_name}}.md"
+
+  #-----
+  # 作品確定
+  #-----
+  - trigger: "(作品確定|work completion)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_work_name"
+        action: "extract"
+        pattern: "(作品確定|work completion)：(.+)"
+        group: 2
+        store_as: "work_name"
+      - name: "start_work_completion"
+        action: "call creative/04_quality_improvement.mdc => work_completion_questions"
+        message: "【作品確定】「{{work_name}}」を完成させます。以下の質問に回答してください。"
+      - name: "wait_user_responses"
+        action: "wait_for_all_answers"
+        message: "作品完成に必要な情報を収集しています..."
+      - name: "confirm_completion"
+        action: "confirm"
+        message: "「{{work_name}}」を完成作品として確定します。よろしいですか？"
+      - name: "create_final_work"
+        action: "create_markdown_file"
+        path: "{{patterns.draft_final_work}}"
+        template_reference: "creative/04_quality_improvement.mdc => work_completion_template"
+        message: "完成作品を作成しました: {{patterns.draft_final_work}}"
+      - name: "move_to_stock"
+        action: "execute_shell"
+        command: "mkdir -p {{dirs.creative_works}}/{{work_type}}/{{work_name}} && cp -r {{patterns.flow_creative}}/* {{dirs.creative_works}}/{{work_type}}/{{work_name}}/"
+        message: "作品をStockディレクトリに移動しています..."
+      - name: "notify_completion"
+        action: "notify"
+        message: |
+          🎉 作品「{{work_name}}」が完成しました！
+          
+          保存場所: {{dirs.creative_works}}/{{work_type}}/{{work_name}}/
+          
+          次のステップ:
+          1. 作品の公開・共有
+          2. フィードバックの収集
+          3. 次の作品の企画
+          
+          素晴らしい創作活動でした！
+
+#============================
+# 作品管理・継続
+#============================
+
+  #-----
+  # 作品再開
+  #-----
+  - trigger: "(作品再開|resume work)：(.+)"
+    priority: high
+    steps:
+      - name: "extract_work_name"
+        action: "extract"
+        pattern: "(作品再開|resume work)：(.+)"
+        group: 2
+        store_as: "work_name"
+      - name: "check_existing_work"
+        action: "execute_shell"
+        command: "find {{dirs.creative_works}} -name '*{{work_name}}*' -type d"
+        message: "既存の作品を検索しています..."
+      - name: "notify_resume_options"
+        action: "notify"
+        message: |
+          「{{work_name}}」の作品再開オプション:
+          
+          1. 「シーン追加：{{work_name}}」で新しいシーンを追加
+          2. 「構成見直し：{{work_name}}」で構成を調整
+          3. 「キャラクター追加：{{work_name}}」で新キャラクターを追加
+          
+          どの作業から始めますか？
+
+  #-----
+  # 創作進捗確認
+  #-----
+  - trigger: "(創作進捗確認|creative progress|進捗状況)"
+    priority: high
+    steps:
+      - name: "check_flow_files"
+        action: "execute_shell"
+        command: "find {{patterns.flow_creative}} -name '*.md' -type f | wc -l"
+        message: "今日の創作ファイル数を確認しています..."
+      - name: "check_recent_works"
+        action: "execute_shell"
+        command: "find {{dirs.creative_works}} -name '*.md' -type f -mtime -7 | head -10"
+        message: "最近の作品を確認しています..."
+      - name: "notify_progress"
+        action: "notify"
+        message: |
+          📊 創作進捗状況
+          
+          今日の作業ファイル: {{shell_output}} 個
+          最近の作品更新: 確認完了
+          
+          継続的な創作活動、素晴らしいです！
+
+#============================
+# ヘルプ・ガイド
+#============================
+
+  #-----
+  # 創作ヘルプ
+  #-----
+  - trigger: "(創作ヘルプ|creative help|使い方)"
+    priority: high
+    steps:
+      - name: "show_help"
+        action: "notify"
+        message: |
+          📚 キャラクター小説創作支援システム - 使い方ガイド
+          
+          【基本的な流れ】
+          1. 「創作環境セットアップ」で環境準備
+          2. キャラクター研究（推しキャラ分析 or 参考キャラ分析）
+          3. 構成作成（タロットカード式 or 構造分析式）
+          4. シーン執筆（夢小説シーン or オリジナルシーン）
+          5. 品質向上・作品完成
+          
+          【主要コマンド】
+          - 推しキャラ分析開始：[キャラ名]
+          - 参考キャラ分析開始：[キャラ名]
+          - 夢小説構成作成：タロットカード式
+          - 夢小説シーン作成：[シーン設定]
+          - 作品確定：[作品名]
+          
+          【サポート】
+          - 「創作進捗確認」で進捗状況確認
+          - 「作品再開：[作品名]」で既存作品の続き
+          
+          素晴らしい創作ライフを！
+
+# ----
+# 補足: 全体設定や共通メタ情報など
+# ----
+settings:
+  date_format: "YYYY-MM-DD"
+  language: "ja"
+  default_actions:
+    - "character_research"
+    - "story_structure"
+    - "scene_creation"
+    - "quality_improvement"
+  error_handling:
+    unrecognized_trigger: "すみません、そのコマンドに対応するルールが見つかりませんでした。「創作ヘルプ」と入力すると使い方を確認できます。"
+    partial_answer: "一部回答が不足しています。スキップして進めますか？"
+
+notes:
+  - "このマスタールールで使われる 01_character_research.mdc, 02_story_structure.mdc 等に各フェーズの質問リスト・テンプレを記載"
+  - "creative_flow_rules.mdc 等でドラフト→確定反映の手順を定義する"
+  - "キャラクター研究を重視し、表面的な模倣ではなく深層的な理解に基づく創作を支援"
+  - "夢小説・オリジナル小説の両方に対応した柔軟なフレームワーク"
