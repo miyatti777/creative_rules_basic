@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: # キャラクター研究を基盤とした物語構成の作成を支援 # タロットカード式・構造分析式・オリジナル構成に対応
+globs: 
 alwaysApply: false
 ---
 # ==========================================================
@@ -10,8 +10,69 @@ alwaysApply: false
 # タロットカード式・構造分析式・オリジナル構成に対応
 
 #============================
-# タロットカード式構成（夢小説用）
+# タロットプロットカードシステム（物語構成用）
 #============================
+
+tarot_plot_card_system:
+  description: "完全にランダムなカード配置で物語プロットを構築するシステム"
+  
+  card_deck:
+    cards: ["知恵", "生命", "信頼", "勇気", "慈愛", "秩序", "至誠", "創造", "厳格", "治癒", "理性", "節度", "調和", "結合", "庇護", "清楚", "善良", "開放", "変化", "幸運", "意思", "誓約", "寛容", "公式"]
+    positions: ["正位置", "逆位置"]
+    
+  structure_mapping:
+    story_type:
+      - "ジャンル/モチーフ"
+      - "テーマ" 
+      - "アンチテーゼ"
+    
+    setting:
+      - "天（時代）"
+      - "地（舞台）"
+    
+    protagonist:
+      - "主人公の過去（欲望）"
+      - "主人公の憧れ性（読者がいいなと思うところ）"
+      - "主人公の現在"
+      - "主人公の共通性（読者が共感できたり自分と同じと思うところ）"
+      - "主人公の貫通行動（ストーリーを通じた主人公の行動原理）"
+      - "主人公の近い未来"
+      - "主人公の未来"
+    
+    characters:
+      - "援助者（主人公を最終的に助ける仲間）"
+      - "敵対者（主人公と最終的に対立し乗り越えるべき人物）"
+      - "依頼主（目的提示者）"
+      - "アウトカム（目的）"
+      - "ターゲット（目的対象者）"
+    
+    story_flow:
+      - "事件：分離（ヒーローズジャーニーの開始「起」）"
+      - "事件：移行（ヒーローズジャーニーの本格的な冒険「承」）"
+      - "事件：最大の困難（ヒーローズジャーニーで訪れる最大の障害「転」）"
+      - "事件：再統合（ヒーローズジャーニーの結末「結」）"
+
+  randomization_rules:
+    - "完全にランダムな配置を担保すること"
+    - "ストーリーにしやすいようにカードを勝手に割り当てないこと"
+    - "絶対に完全にランダムになるよう努力すること"
+    - "カードは正位置・逆位置もランダムに決定"
+
+  story_box_format:
+    guidelines:
+      起: "ジャンル、テーマ、天（時代）、地（舞台）、主人公の過去、主人公の憧れ性、主人公の現在、主人公の共通性などを伝える。転で伝える「テーマ」が際立つように、その逆の内容「アンチテーゼ」がここで伝わるようにする"
+      承: "基本は「XXXXXによって主人公は困る」というように、主人公が困難にぶつかる書き方にする。主人公の貫通行動が伝わる内容にする"
+      転: "主人公が最大の困難にぶつかり困るようにする。そしてそれを乗り越える「主人公の近い未来」を提示する"
+      結: "余韻として、主人公の未来がどうなったのかを描く"
+    
+    example_format: |
+      起1: ガロとリオの初バトル。地球はカオスで滅びそう。
+      承2: ガロはクレイとバーニッシュについて悩む
+      承3: ガロはクレイと初対決するが拘束され困る
+      承4: ガロはリオと二度目の対決するが、研究所でクレイが悪なことを確信し、止めようと困る
+      承5: リオとクレイが和解、クレイが地球脱出するのを止めようとするが強くて困る
+      転6: 地球が滅びそうで超困るが、ガロとリオが協力して地球を救う
+      結7: 日常に戻る
 
 tarot_structure_questions:
   - key: "work_title"
@@ -39,6 +100,88 @@ tarot_structure_questions:
   - key: "avoid_elements"
     question: "避けたい要素や展開があれば教えてください"
     required: false
+
+tarot_plot_card_template: |
+  # タロットプロットカード構成：{{work_title}}
+
+  ## 【Step1】ランダムカード配置結果
+
+  ### 1. 物語の種類
+  - **ジャンル/モチーフ**: {{card_assignments.genre}} ({{card_positions.genre}})
+    - 解釈: {{genre_interpretation}}
+  - **テーマ**: {{card_assignments.theme}} ({{card_positions.theme}})
+    - 解釈: {{theme_interpretation}}
+  - **アンチテーゼ**: {{card_assignments.antithesis}} ({{card_positions.antithesis}})
+    - 解釈: {{antithesis_interpretation}}
+
+  ### 2. 物語の舞台設定
+  - **天（時代）**: {{card_assignments.era}} ({{card_positions.era}})
+    - 解釈: {{era_interpretation}}
+  - **地（舞台）**: {{card_assignments.setting}} ({{card_positions.setting}})
+    - 解釈: {{setting_interpretation}}
+
+  ### 3. 主人公の性格
+  - **主人公の過去（欲望）**: {{card_assignments.past}} ({{card_positions.past}})
+    - 解釈: {{past_interpretation}}
+  - **主人公の憧れ性**: {{card_assignments.admiration}} ({{card_positions.admiration}})
+    - 解釈: {{admiration_interpretation}}
+  - **主人公の現在**: {{card_assignments.present}} ({{card_positions.present}})
+    - 解釈: {{present_interpretation}}
+  - **主人公の共通性**: {{card_assignments.relatability}} ({{card_positions.relatability}})
+    - 解釈: {{relatability_interpretation}}
+  - **主人公の貫通行動**: {{card_assignments.core_action}} ({{card_positions.core_action}})
+    - 解釈: {{core_action_interpretation}}
+  - **主人公の近い未来**: {{card_assignments.near_future}} ({{card_positions.near_future}})
+    - 解釈: {{near_future_interpretation}}
+  - **主人公の未来**: {{card_assignments.future}} ({{card_positions.future}})
+    - 解釈: {{future_interpretation}}
+
+  ### 4. 登場人物
+  - **援助者**: {{card_assignments.ally}} ({{card_positions.ally}})
+    - 解釈: {{ally_interpretation}}
+  - **敵対者**: {{card_assignments.antagonist}} ({{card_positions.antagonist}})
+    - 解釈: {{antagonist_interpretation}}
+  - **依頼主**: {{card_assignments.quest_giver}} ({{card_positions.quest_giver}})
+    - 解釈: {{quest_giver_interpretation}}
+  - **アウトカム（目的）**: {{card_assignments.outcome}} ({{card_positions.outcome}})
+    - 解釈: {{outcome_interpretation}}
+  - **ターゲット（目的対象者）**: {{card_assignments.target}} ({{card_positions.target}})
+    - 解釈: {{target_interpretation}}
+
+  ### 5. ストーリーの流れ
+  - **事件：分離**: {{card_assignments.separation}} ({{card_positions.separation}})
+    - 解釈: {{separation_interpretation}}
+  - **事件：移行**: {{card_assignments.transition}} ({{card_positions.transition}})
+    - 解釈: {{transition_interpretation}}
+  - **事件：最大の困難**: {{card_assignments.crisis}} ({{card_positions.crisis}})
+    - 解釈: {{crisis_interpretation}}
+  - **事件：再統合**: {{card_assignments.reintegration}} ({{card_positions.reintegration}})
+    - 解釈: {{reintegration_interpretation}}
+
+  ## 【Step3】大箱（ストーリーライン）
+
+  {{story_boxes}}
+
+  ## 【Step4】詳細ヒアリング結果
+  {{detailed_hearing_results}}
+
+  ## 【Step5】カード変更履歴
+  {{card_change_history}}
+
+  ## 【最終】詳細あらすじ
+
+  ### タイトル
+  **{{final_title}}**
+
+  ### あらすじ
+  {{detailed_synopsis}}
+
+  ## 編集者モード - 追加設定
+  {{editor_mode_additions}}
+
+  ---
+  *作成日: {{today}}*
+  *プロットカード生成システム使用*
 
 tarot_structure_template: |
   # タロットカード式構成：{{work_title}}
@@ -112,6 +255,69 @@ tarot_structure_template: |
   ---
   *作成日: {{today}}*
   *構成者: {{creator_name}}*
+
+#============================
+# プロットカードシステム - 追加機能
+#============================
+
+card_change_system:
+  description: "ユーザーがカードを変更したい場合の処理システム"
+  
+  available_cards: ["知恵", "生命", "信頼", "勇気", "慈愛", "秩序", "至誠", "創造", "厳格", "治癒", "理性", "節度", "調和", "結合", "庇護", "清楚", "善良", "開放", "変化", "幸運", "意思", "誓約", "寛容", "公式"]
+  
+  change_process:
+    step1: "変えたいカードの位置を特定"
+    step2: "新しいカードを選択"
+    step3: "正位置・逆位置を指定"
+    step4: "プロット再生成"
+    step5: "再度変更確認"
+  
+  questions:
+    - "変えたいカードはありますか？"
+    - "どの位置のカードを変更しますか？"
+    - "どのカードに変更しますか？"
+    - "正位置ですか、逆位置ですか？"
+    - "もう変更は大丈夫ですか？このプロットを、あらすじとして詳細化しますか？"
+
+editor_mode_system:
+  description: "編集者として詳細な設定を決めるためのシステム"
+  
+  principles:
+    - "1度の発言で1つの質問のみ"
+    - "いっきにいっぱい聞かない"
+    - "質問の度に新しくストーリーを生成しなおす"
+    - "話を面白くするための詳細な設定を聞く"
+  
+  question_categories:
+    character_details: "キャラクターの詳細設定"
+    relationship_dynamics: "関係性の詳細"
+    world_building: "世界観の詳細"
+    plot_refinement: "プロットの細かい調整"
+    emotional_beats: "感情の流れの詳細"
+    scene_specifics: "具体的なシーン設定"
+  
+  sample_questions:
+    - "主人公の職業や立場をもう少し具体的に決めませんか？"
+    - "二人が初めて出会うシーンの詳細を決めましょうか？"
+    - "物語の舞台となる場所の特徴を詳しく設定しませんか？"
+    - "クライマックスでの感情の動きをもっと詳しく描きませんか？"
+
+synopsis_generation_system:
+  description: "宣伝などで使われるような装飾された文体でのあらすじ生成"
+  
+  style_guidelines:
+    - "魅力的で読者の興味を引く文体"
+    - "キャラクターの魅力を前面に出す"
+    - "感情的な要素を強調"
+    - "読みたくなるような煽り文句を含む"
+  
+  structure:
+    title: "印象的で覚えやすいタイトル"
+    hook: "読者の興味を引く導入"
+    premise: "基本的な設定と状況"
+    conflict: "主要な葛藤や問題"
+    emotional_appeal: "感情的な魅力"
+    conclusion_hint: "結末への期待感"
 
 #============================
 # 構造分析式構成（夢小説用）
