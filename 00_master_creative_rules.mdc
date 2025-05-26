@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 path_reference: "creative/creative_paths.mdc"
 
@@ -320,23 +320,62 @@ master_triggers:
     priority: high
     steps:
       - name: "start_tarot_structure"
-        action: "call creative/02_story_structure.mdc => tarot_structure_questions"
-        message: "【タロットカード式構成】夢小説の構成をタロットカード式で作成します。以下の質問に回答してください。"
-      - name: "wait_user_responses"
-        action: "wait_for_all_answers"
-        message: "タロットカード式構成に必要な情報を収集しています..."
-      - name: "confirm_structure_creation"
-        action: "confirm"
-        message: "タロットカード式で夢小説の構成を作成します。よろしいですか？"
+        action: "call creative/02_story_structure.mdc => tarot_plot_card_system"
+        message: "【タロットカード式構成】物語プロットカードシステムで夢小説の構成を作成します。完全にランダムなカード配置で物語を構築します。"
+      - name: "execute_random_card_assignment"
+        action: "random_card_shuffle"
+        card_deck: ["知恵", "生命", "信頼", "勇気", "慈愛", "秩序", "至誠", "創造", "厳格", "治癒", "理性", "節度", "調和", "結合", "庇護", "清楚", "善良", "開放", "変化", "幸運", "意思", "誓約", "寛容", "公式"]
+        positions: ["正位置", "逆位置"]
+        structure_elements: [
+          "ジャンル/モチーフ", "テーマ", "アンチテーゼ", "天（時代）", "地（舞台）",
+          "主人公の過去（欲望）", "主人公の憧れ性", "主人公の現在", "主人公の共通性", 
+          "主人公の貫通行動", "主人公の近い未来", "主人公の未来",
+          "援助者", "敵対者", "依頼主", "アウトカム", "ターゲット",
+          "事件：分離", "事件：移行", "事件：最大の困難", "事件：再統合"
+        ]
+        message: "カードをランダムにシャッフルして物語構造に割り当てています..."
+      - name: "create_story_outline"
+        action: "generate_story_boxes"
+        instructions: "割り当てられたカードを基に7-8個の大箱（ストーリーライン）を作成します"
+        format: "起承転結形式で、各箱は「XXXによって主人公は困る」という形で記述"
+        message: "ストーリーラインを生成しています..."
+      - name: "present_initial_plot"
+        action: "present_plot"
+        message: "【Step3完了】カード割り当て結果とストーリーラインを提示します。"
+      - name: "start_detailed_hearing"
+        action: "detailed_story_hearing"
+        message: "【Step4】詳細なストーリーにするためのヒアリングを開始します。"
+      - name: "offer_card_changes"
+        action: "card_change_consultation"
+        available_cards: ["知恵", "生命", "信頼", "勇気", "慈愛", "秩序", "至誠", "創造", "厳格", "治癒", "理性", "節度", "調和", "結合", "庇護", "清楚", "善良", "開放", "変化", "幸運", "意思", "誓約", "寛容", "公式"]
+        message: "【Step5】変えたいカードはありますか？上記のカードから選択し、正位置か逆位置かも指定してください。もしなければ、このプロットを詳細なあらすじとして生成しますか？"
+      - name: "finalize_or_continue"
+        action: "conditional_branch"
+        conditions:
+          - if: "card_changes_requested"
+            then: "apply_card_changes_and_regenerate"
+          - if: "synopsis_generation_requested"
+            then: "generate_detailed_synopsis"
+        message: "選択に応じて処理を進めます..."
+      - name: "editor_mode_consultation"
+        action: "editor_mode_start"
+        message: "【Step5】この話をさらに肉付けしますか？ここから先は私は編集者として、よりストーリーの細かいところを決めるために、質問をつづけます"
+        question_style: "1度の発言で1つの質問のみ"
+        regeneration: "質問の度に新しくストーリーを生成しなおす"
       - name: "create_tarot_structure"
         action: "create_markdown_file"
         path: "{{patterns.draft_tarot_structure}}"
-        template_reference: "creative/02_story_structure.mdc => tarot_structure_template"
-        message: "タロットカード式構成を作成しました: {{patterns.draft_tarot_structure}}"
+        template_reference: "creative/02_story_structure.mdc => tarot_plot_card_template"
+        message: "タロットプロットカード構成を作成しました: {{patterns.draft_tarot_structure}}"
       - name: "notify_next_steps"
         action: "notify"
         message: |
-          ✅ タロットカード式構成が完了しました！
+          ✅ タロットプロットカード式構成が完了しました！
+          
+          生成された要素:
+          - ランダムカード割り当て結果
+          - 7-8個のストーリーライン（起承転結）
+          - 詳細なあらすじ（装飾された文体）
           
           次のステップ:
           1. 「シーン詳細設計：[シーン名]」で各シーンを詳細設計
